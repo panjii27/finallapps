@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+  web:
+    image: hanitriyunianto/web
+    depends_on: [db]
+    links:
+      - db
+  db:
+    image: hanitriyunianto/mysql
+  proxy:
+    image: hanitriyunianto/proxy
+    depends_on: [web]
+  pma:
+    image: hanitriyunianto/phpmyadmin
+    depends_on:
+      - db
+    links:
+      - db
