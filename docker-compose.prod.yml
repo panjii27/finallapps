@@ -36,6 +36,7 @@ services:
       MYSQL_PASSWORD_FILE : cilsykuasaipassword
     volumes:
        - ./volumes/mysql:/var/lib/mysql
+#        - mysql-db:/var/lib/mysql
     networks:
       proxy_net:
       int_net:
@@ -51,7 +52,7 @@ services:
       interval: 1s
       retries: 120
   proxy:
-    image: nginx:1.15.6
+    image: hanitriyunianto/proxy
     depends_on: [web]
     ports:
       - 80:80
@@ -71,7 +72,7 @@ services:
       timeout: 10s
       retries: 3
   pma:
-    image: phpmyadmin:latest
+    image: hanitriyunianto/phpmyadmin
     depends_on:
       - db
     environment:
@@ -97,7 +98,9 @@ services:
       timeout: 10s
       retries: 3
 volumes:
+#  db-data:
   pma-data:
+#  mysql-db:
 networks:
   proxy_net:
   int_net:
