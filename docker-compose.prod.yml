@@ -23,6 +23,7 @@ services:
       timeout: 10s
       retries: 3
   db:
+    image: mysql:5.7
     secrets:
       - root
       - dbs
