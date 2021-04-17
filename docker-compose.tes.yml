@@ -1,0 +1,116 @@
+version: "3.7"
+services:
+  web:
+    image: hanitriyunianto/web
+    working_dir: /var/www/html
+    volumes:
+       - ./file-web:/var/www/html/
+    networks:
+      proxy_net:
+      int_net:
+    links:
+      - db
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2    
+        delay: 10s
+      restart_policy:    
+        condition: any
+    healthcheck:
+      test: curl -f http://localhost/ || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
+  db:
+    image: mysql:5.7
+    secrets:
+      - root
+      - dbs
+      - user
+      - pwd  
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: 123456
+      MYSQL_DATABASE_FILE : dbkuasai
+      MYSQL_USER_FILE : cilsykuasaiuser
+      MYSQL_PASSWORD_FILE : cilsykuasaipassword
+    volumes:
+       - ./volumes/mysql:/var/lib/mysql
+#        - mysql-db:/var/lib/mysql
+    networks:
+      proxy_net:
+      int_net:
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: any
+    healthcheck:
+      test: "/etc/init.d/mysql status"
+      interval: 1s
+      retries: 120
+  proxy:
+    image: hanitriyunianto/proxy
+    depends_on: [web]
+    ports:
+      - 80:80
+    networks:
+      proxy_net:
+      ext_net:
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: any
+    healthcheck:
+      test: curl -f http://localhost/ || exit 0
+      interval: 5s
+      timeout: 10s
+      retries: 3
+  pma:
+    image: hanitriyunianto/phpmyadmin
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT_NUMBER: 3306
+    volumes:
+      - pma-data:/bitnami/mariadb
+    networks:
+      int_net:
+      proxy_net:
+    links:
+      - db
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: any
+    healthcheck:
+      test: curl -f http://localhost:8080/ || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
+volumes:
+#  db-data:
+  pma-data:
+#  mysql-db:
+networks:
+  proxy_net:
+  int_net:
+  ext_net:
+secrets:
+ root:
+  file: ./secret/root.txt
+ dbs:
+  file: ./secret/dbs.txt
+ user:
+  file: ./secret/user.txt
+ pwd:
+  file: ./secret/pwd.txt
