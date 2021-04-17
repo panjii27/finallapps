@@ -30,10 +30,10 @@ services:
       - user
       - pwd  
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root
-      MYSQL_DATABASE_FILE : /run/secrets/dbs
-      MYSQL_USER_FILE : /run/secrets/user
-      MYSQL_PASSWORD_FILE : /run/secrets/pwd
+      MYSQL_ROOT_PASSWORD_FILE: 123456
+      MYSQL_DATABASE_FILE : dbkuasai
+      MYSQL_USER_FILE : cilsykuasaiuser
+      MYSQL_PASSWORD_FILE : cilsykuasaipassword
     volumes:
        - ./volumes/mysql:/var/lib/mysql
 #        - mysql-db:/var/lib/mysql
