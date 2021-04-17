@@ -23,13 +23,15 @@ services:
       retries: 3
   db:
     secrets:
-      - db_root_password
-      - db_dba_password
+      - root
+      - dbs
+      - user
+      - pwd  
     environment:
-      MYSQL_DATABASE: dbkuasai
-      MYSQL_USER: cilsykuasaiuser
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
-      MYSQL_PASSWORD_FILE: /run/secrets/db_dba_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root
+      MYSQL_DATABASE_FILE : /run/secrets/dbs
+      MYSQL_USER_FILE : /run/secrets/user
+      MYSQL_PASSWORD_FILE : /run/secrets/pwd
     volumes:
        - ./volumes/mysql:/var/lib/mysql
 #        - mysql-db:/var/lib/mysql
@@ -102,7 +104,11 @@ networks:
   int_net:
   ext_net:
 secrets:
-  db_root_password:
-    external: true
-  db_dba_password:
-    external: true
+ root:
+  file: ./secret/root.txt
+ dbs:
+  file: ./secret/dbs.txt
+ user:
+  file: ./secret/user.txt
+ pwd:
+  file: ./secret/pwd.txt
