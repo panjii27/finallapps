@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   web:
-    image: hanitriyunianto/web
+    image: php:latest
     working_dir: /var/www/html
     volumes:
        - ./file-web:/var/www/html/
@@ -36,7 +36,6 @@ services:
       MYSQL_PASSWORD_FILE : cilsykuasaipassword
     volumes:
        - ./volumes/mysql:/var/lib/mysql
-#        - mysql-db:/var/lib/mysql
     networks:
       proxy_net:
       int_net:
@@ -52,7 +51,7 @@ services:
       interval: 1s
       retries: 120
   proxy:
-    image: hanitriyunianto/proxy
+    image: nginx:1.15.6
     depends_on: [web]
     ports:
       - 80:80
@@ -72,7 +71,7 @@ services:
       timeout: 10s
       retries: 3
   pma:
-    image: hanitriyunianto/phpmyadmin
+    image: phpmyadmin:latest
     depends_on:
       - db
     environment:
@@ -98,9 +97,7 @@ services:
       timeout: 10s
       retries: 3
 volumes:
-#  db-data:
   pma-data:
-#  mysql-db:
 networks:
   proxy_net:
   int_net:
